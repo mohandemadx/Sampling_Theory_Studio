@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1040</width>
-    <height>787</height>
+    <height>830</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,21 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" rowspan="4">
+    <item row="6" column="1">
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string>Full Screen</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="6">
+     <widget class="QPushButton" name="pushButton_7">
+      <property name="text">
+       <string>Restore/home</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" rowspan="7">
      <widget class="QFrame" name="frame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -468,50 +482,44 @@ border-radius: 40px;
       </layout>
      </widget>
     </item>
-    <item row="3" column="1">
-     <widget class="QPushButton" name="pushButton_2">
-      <property name="text">
-       <string>Full Screen</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
+    <item row="6" column="2">
      <widget class="QPushButton" name="pushButton_3">
       <property name="text">
        <string>Zoom In</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="3">
-     <widget class="QPushButton" name="pushButton_4">
+    <item row="4" column="1" colspan="6">
+     <widget class="PlotWidget" name="Reconstructed"/>
+    </item>
+    <item row="1" column="6">
+     <widget class="QPushButton" name="pushButton_8">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>30</height>
+       </size>
+      </property>
       <property name="text">
-       <string>Zoom Out</string>
+       <string>Export</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="4">
+    <item row="6" column="4">
      <widget class="QPushButton" name="pushButton_5">
       <property name="text">
        <string>Pause</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="5">
-     <widget class="QPushButton" name="pushButton_6">
-      <property name="text">
-       <string>SnapShot</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="6">
-     <widget class="QPushButton" name="pushButton_7">
-      <property name="text">
-       <string>Restore/home</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1" colspan="6">
-     <widget class="QGraphicsView" name="graphicsView_5"/>
+    <item row="3" column="1" colspan="6">
+     <widget class="PlotWidget" name="OriginalSignal"/>
     </item>
     <item row="1" column="1" colspan="5">
      <widget class="QComboBox" name="comboBox">
@@ -549,25 +557,6 @@ border-radius: 40px;
       </item>
      </widget>
     </item>
-    <item row="1" column="6">
-     <widget class="QPushButton" name="pushButton_8">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>30</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Export</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="1" colspan="2">
      <widget class="QLabel" name="label_13">
       <property name="font">
@@ -579,6 +568,23 @@ border-radius: 40px;
        <string>Choose Signal to View:</string>
       </property>
      </widget>
+    </item>
+    <item row="6" column="3">
+     <widget class="QPushButton" name="pushButton_4">
+      <property name="text">
+       <string>Zoom Out</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="5">
+     <widget class="QPushButton" name="pushButton_6">
+      <property name="text">
+       <string>SnapShot</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1" colspan="6">
+     <widget class="PlotWidget" name="Difference"/>
     </item>
    </layout>
   </widget>
@@ -594,6 +600,13 @@ border-radius: 40px;
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">pyqtgraph</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
