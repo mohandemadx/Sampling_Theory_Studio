@@ -142,8 +142,7 @@ class MainApp(QMainWindow, FORM_CLASS):
 
     def freqchanged(self):
         slider_value = self.FreqSlider.value()
-        factor = slider_value
-        self.plot_original(self.signal, factor)
+        self.plot_original(signal = self.signal, factor = slider_value)
 
     def plot_original(self, signal, factor):
 
@@ -163,8 +162,10 @@ class MainApp(QMainWindow, FORM_CLASS):
 
 
         # sampling_interval = 1 / sampling_frequency
-        self.sampled_signal = signal.y[:: len(signal.x)//((Number_Of_Samples)*(ceil(signal.x[-1])))]
-        self.time_sampled = signal.x[::len(signal.x)//((Number_Of_Samples)*(ceil(signal.x[-1])))]
+        Donimenator = ((Number_Of_Samples)*(ceil(signal.x[-1])))
+        if Donimenator != 0:
+            self.sampled_signal = signal.y[:: len(signal.x) // Donimenator]
+            self.time_sampled = signal.x[::len(signal.x) // Donimenator]
 
 
         sampled_scatter = ScatterPlotItem()
