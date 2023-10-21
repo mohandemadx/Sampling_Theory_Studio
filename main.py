@@ -1,20 +1,24 @@
 import os
 import sys
+from math import ceil
 
 import numpy as np
-import pandas as pd
+from PyQt5 import QtGui
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QFileDialog, QListWidgetItem, QVBoxLayout, QWidget
 from PyQt5.uic import loadUiType
 from os import path
-
+import matplotlib.pyplot as plt
 from PyQt5.uic.properties import QtCore
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_template import FigureCanvas
-from numpy import hamming
-from numpy.distutils.fcompiler import pg
-from pyqtgraph import ScatterPlotItem
-from scipy.fft._pocketfft import fft
+import pyqtgraph as pg
+from pyqtgraph import PlotDataItem
+from pyqtgraph.graphicsItems.ScatterPlotItem import ScatterPlotItem
+import pandas as pd
+from scipy.fft import fft
+from scipy.interpolate import interp1d
+from scipy.signal.windows import hamming
 
 FORM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "task2_design.ui"))
 
@@ -24,6 +28,7 @@ class Signal:
         self.name = file_name
         self.path = file_path
         self.data = data
+
 
     def __str__(self):
         return f"Name: {self.name}, Path: {self.path}, Data: {self.data}"
@@ -57,9 +62,12 @@ class MainApp(QMainWindow, FORM_CLASS):
         self.Difference.setTitle("Difference Plot")
         self.Difference.setLabel('bottom', text='Time (s)')
         self.Difference.setLabel('left', text='Amplitude')
-
-        self.amplitudes = []
-        self.time = []
+        self.FreqSlider.valueChanged.connect(self.freqchanged)
+        self.checkBox.stateChanged.connect(self.update_freq_range)
+        self.checkBox.setChecked(True)
+        self.FreqSlider.setRange(0, 8)
+        self.amplitudes=[]
+        self.time=[]
 
         # Actions
         self.uploadButton.clicked.connect(self.upload_file)
@@ -83,6 +91,7 @@ class MainApp(QMainWindow, FORM_CLASS):
             self.label_2.setText(f'{self.signal.name}')
             color = QColor(0, 122, 217)  # Red color (RGB)
             self.label_2.setStyleSheet(f'color: {color.name()}; font-weight: bold')
+        self.plot_original(2)
 
     def dragEnterEvent(self, event):
         mime_data = event.mimeData()
@@ -108,7 +117,19 @@ class MainApp(QMainWindow, FORM_CLASS):
                     color = QColor(0, 122, 217)  # Red color (RGB)
                     self.label_2.setStyleSheet(f'color: {color.name()}; font-weight: bold')
 
-    def plot_original(self):
+    def update_freq_range(self):
+
+        if self.checkBox.isChecked():
+            self.FreqSlider.setRange(1, 8)
+        else:
+            self.FreqSlider.setRange(2, int(len(self.y)/(ceil(self.x[-1]))))
+
+    def freqchanged(self, value):
+        slider_value = self.FreqSlider.value()
+        factor = slider_value
+        self.plot_original(factor)
+
+    def plot_original(self,factor):
 
          self.OriginalSignal.clear()
          df = pd.read_csv(self.signal.path)
@@ -124,26 +145,33 @@ class MainApp(QMainWindow, FORM_CLASS):
          max_frequency = self.calculate_max_freq()
 
         # Set the sampling frequency based on Nyquist theorem
-         sampling_frequency = 2 * max_frequency
-         sampling_interval = 1 / sampling_frequency
+         if self.checkBox.isChecked():
+             Number_Of_Samples = factor* ceil(max_frequency)
 
-         self.sampled_signal = self.y[::int(1 / sampling_interval)]
-         self.time_sampled = self.x[::int(1 / sampling_interval)]
+         else:
+             Number_Of_Samples = factor
+
+
+
+        # sampling_interval = 1 / sampling_frequency
+         self.sampled_signal = self.y[:: len(self.x)//((Number_Of_Samples)*(ceil(self.x[-1])))]
+         self.time_sampled = self.x[::len(self.x)//((Number_Of_Samples)*(ceil(self.x[-1])))]
 
 
          sampled_scatter = ScatterPlotItem()
          sampled_scatter.setData(self.time_sampled, self.sampled_signal, symbol='o', brush=(255, 0, 0), size=10)
          self.OriginalSignal.addItem(sampled_scatter)
          self.plot_reconstructed()
+         self.plot_diff()
 
     def calculate_max_freq(self):
-        # Load data
+        # # Load data
         df = pd.read_csv(self.signal.path)
         self.amplitudes = df.iloc[0:1000, 1].values
         self.time = df.iloc[0:1000, 0].values
 
         # Parameters
-        n = 1000  # Increased data points for improved frequency resolution
+        n = len(self.x)  # Increased data points for improved frequency resolution
         Fs = 1 / (self.time[1] - self.time[0])
 
         # Apply Hamming window
@@ -168,10 +196,19 @@ class MainApp(QMainWindow, FORM_CLASS):
         max_freq = freqs[max_freq_index]
 
         print(max_freq)
+        # n = len(self.time)  # Get number of samples in signal amp array
+        # Fs = 1 / (self.time[1] - self.time[0])  # sampling frequency
+        # signal_freq = fft(self.amplitudes) / n  # Apply FFT to sig_amp results in array of complex values representing amplitude and phase of each component
+        #     # which is likely imported from a library (e.g., NumPy or SciPy). The result is an array of complex values representing the amplitude and phase of each frequency component in the signal. The array is then divided by n to normalize the amplitudes.
+        # freqs = np.linspace(0, Fs / 2, n // 2)  # array of frequencies based on Fs
+        # max_freq_index = np.argmax( np.abs(signal_freq[:n // 2]))  # get index of highest magnitude in frequency components
+        # max_freq = freqs[max_freq_index]  # Get the frequency corresponding to greatest magnitude
+        #    # return max_freq  # Return max frequency
+        # print(max_freq)
         return max_freq
 
     def reconstruct_signal(self):
-        time_domain = np.linspace(0, self.x[-1], 10000)
+        time_domain = np.linspace(0, self.x[-1], len(self.x))
         resizing = np.resize(time_domain, (len(self.time_sampled), len(time_domain)))
         # subtract the sample time within the time doamin from the 2 columns
         pre_interpolation = (resizing.T - self.time_sampled) / (self.time_sampled[1] - self.time_sampled[0])
@@ -179,13 +216,31 @@ class MainApp(QMainWindow, FORM_CLASS):
         interpolation = self.sampled_signal * np.sinc(pre_interpolation)
         # get the sum of the columns within one column only with the required data
         samples_of_amplitude_at_time_domain = np.sum(interpolation, axis=1)
-        return time_domain, samples_of_amplitude_at_time_domain
+        return time_domain,samples_of_amplitude_at_time_domain
+
+    def plot_diff(self):
+             self.Difference.clear()
+             x_reconstructed, y_reconstructed = self.reconstruct_signal()
+             x_old, y_old = self.x, self.y
+             diff_x = x_old
+             diff_y = y_old - y_reconstructed
+             plot_item = self.Difference.plot(pen=pg.mkPen('green', width=2))
+             plot_item.setData(diff_x, diff_y)
+
+
+
 
     def plot_reconstructed(self):
         self.Reconstructed.clear()
-        x, y = self.reconstruct_signal()
+        x,y=self.reconstruct_signal()
         plot_item = self.Reconstructed.plot(pen=pg.mkPen('red', width=2))
         plot_item.setData(x, y)
+
+
+
+
+
+
 
 
 def main():
