@@ -66,8 +66,8 @@ class MainApp(QMainWindow, FORM_CLASS):
         self.checkBox.stateChanged.connect(self.update_freq_range)
         self.checkBox.setChecked(True)
         self.FreqSlider.setRange(0, 8)
-        self.amplitudes=[]
-        self.time=[]
+        self.amplitudes = []
+        self.time = []
 
         # Actions
         self.uploadButton.clicked.connect(self.upload_file)
@@ -91,7 +91,7 @@ class MainApp(QMainWindow, FORM_CLASS):
             self.label_2.setText(f'{self.signal.name}')
             color = QColor(0, 122, 217)  # Red color (RGB)
             self.label_2.setStyleSheet(f'color: {color.name()}; font-weight: bold')
-        self.plot_original(2)
+            self.plot_original(2)
 
     def dragEnterEvent(self, event):
         mime_data = event.mimeData()
@@ -133,8 +133,8 @@ class MainApp(QMainWindow, FORM_CLASS):
 
          self.OriginalSignal.clear()
          df = pd.read_csv(self.signal.path)
-         self.y=df.iloc[0:1000,1].values
-         self.x=df.iloc[0:1000,0].values
+         self.y=df.iloc[0:1000, 1].values
+         self.x=df.iloc[0:1000, 0].values
 
          plot_item = self.OriginalSignal.plot(pen=pg.mkPen('blue', width=2))
          plot_item.setData(self.x,self.y)
