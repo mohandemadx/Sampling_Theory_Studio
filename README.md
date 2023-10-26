@@ -25,8 +25,8 @@
   ![Sig Wave](https://github.com/mohandemadx/DSP_TASK_2/assets/102548631/ee7f3764-1611-46d1-9b92-f58f8d0824fb)
 
 - Compare using Difference Graph:
-  
-  ![Compare](https://github.com/mohandemadx/DSP_TASK_2/assets/102548631/cb29e826-ea26-40d1-bf08-f621af83dc0f)\
+
+  ![Screenshot 2023-10-26 235454](https://github.com/mohandemadx/DSP_TASK_2/assets/102548631/86a15e37-9aa8-4760-89d8-bb84c78f51d4)
 
 - Adding Noise:
   
