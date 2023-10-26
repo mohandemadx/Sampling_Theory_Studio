@@ -165,7 +165,7 @@ class MainApp(QMainWindow, FORM_CLASS):
 
     def freqchanged(self):
         slider_value = self.FreqSlider.value()
-        self.plot_original(signal = self.signal, factor = slider_value)
+        self.plot_original(signal = self.signal,factor = slider_value,noise=self.noise)
 
     def plot_original(self, signal, factor,noise):
 
