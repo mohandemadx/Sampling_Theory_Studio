@@ -246,7 +246,7 @@ border-radius: 40px;
           <item>
            <widget class="QLabel" name="label_17">
             <property name="text">
-             <string>0</string>
+             <string>0 Hz</string>
             </property>
            </widget>
           </item>
@@ -443,7 +443,7 @@ border-radius: 40px;
           <item>
            <widget class="QLabel" name="label_14">
             <property name="text">
-             <string>0</string>
+             <string>0 Hz</string>
             </property>
            </widget>
           </item>
@@ -500,7 +500,7 @@ border-radius: 40px;
            </widget>
           </item>
           <item alignment="Qt::AlignTop">
-           <widget class="QSlider" name="horizontalSlider_6">
+           <widget class="QSlider" name="snr_slider">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -594,7 +594,7 @@ border-radius: 40px;
    </hints>
   </connection>
   <connection>
-   <sender>horizontalSlider_6</sender>
+   <sender>snr_slider</sender>
    <signal>valueChanged(int)</signal>
    <receiver>label_15</receiver>
    <slot>setNum(int)</slot>

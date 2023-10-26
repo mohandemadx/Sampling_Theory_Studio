@@ -82,6 +82,7 @@ class MainApp(QMainWindow, FORM_CLASS):
         # Frequency-Sampling Actions
         self.FreqSlider.valueChanged.connect(self.freqchanged)
         self.checkBox.stateChanged.connect(self.update_freq_range)
+      #  self.snr_slider.valueChanged.connect(self.add_noise)
 
         self.checkBox.setChecked(True)
         self.FreqSlider.setRange(0, 4)
@@ -165,7 +166,8 @@ class MainApp(QMainWindow, FORM_CLASS):
         self.plot_original(signal = self.signal, factor = slider_value)
 
     def plot_original(self, signal, factor):
-       # noise=self.generate_noise()
+
+      #  noise=self.add_noise()
         self.OriginalSignal.clear()
         plot_item = self.OriginalSignal.plot(pen=pg.mkPen('blue', width=2))
         plot_item.setData(signal.x, signal.y)
@@ -276,7 +278,7 @@ class MainApp(QMainWindow, FORM_CLASS):
         self.signals.append(self.composed_signal)
         for i, signal in enumerate(self.signals):
             signal.index = i
-        self.signalsList.addItem(f"{i+1}-F:{self.composed_signal.frequency} , Amplitude:{self.composed_signal.amplitude}, phase shift:{self.composed_signal.phase_shift}")
+        self.signalsList.addItem(f"{i+1}-F:{self.composed_signal.frequency} , A:{self.composed_signal.amplitude}, phase shift:{self.composed_signal.phase_shift}")
 
         self.OriginalSignal.clear()
        # Plot the signal
@@ -291,31 +293,34 @@ class MainApp(QMainWindow, FORM_CLASS):
 
     def remove_signal(self):
         index = self.signalsList.currentIndex()
+        # signals_to_remove = []
+
         for i in range(len(self.signals)):
             if index==self.signals[i].index:
                 self.signals.remove(self.signals[i])
                 self.signalsList.removeItem(index)
-                self.signals[i+1].index = i
-                updated_item_text = f" {i}- {item_text.split('- ', 1)[1]}"
-                self.signalsList.setItemText(i+1, updated_item_text)
+             #   self.signals[i].index = i+1
 
+        self.OriginalSignal.clear()
+        combined_signal = np.zeros(len(self.signals[0].y))
+        for signal in self.signals:
+                combined_signal += signal.y
 
+        self.signal = Signal(None, None, self.composed_signal.x, combined_signal)
+        self.plot_original(self.signal, 2)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    # def add_noise(self):
+    #     snr_slider_value = self.snr_slider.value()  # Replace this with the actual SNR value from your slider
+    #
+    #     # Calculate the standard deviation (sigma) based on SNR (in dB)
+    #     # SNR = 20 * log10(amplitude_signal / amplitude_noise)
+    #     amplitude_signal = self.signal.y
+    #     snr_linear = 10 ** (snr_slider_value / 20.0)  # Convert SNR from dB to linear scale
+    #     sigma = amplitude_signal / snr_linear
+    #     mu = 0  # Mean of the Gaussian noise (typically 0)
+    #     num_samples = len(self.signal.y)  # Number of noise samples
+    #     gaussian_noise = np.random.normal(mu, sigma, num_samples)
+    #     self.plot_original(self.signal,2)
 
 
 def main():
