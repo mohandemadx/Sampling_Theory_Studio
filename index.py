@@ -295,53 +295,32 @@ class MainApp(QMainWindow, FORM_CLASS):
 
     def remove_signal(self):
         index = self.signalsList.currentIndex()
-        # signals_to_remove = []
 
-        for i in range(len(self.signals)):
-            if index==self.signals[i].index:
-                self.signals.remove(self.signals[i])
-                self.signalsList.removeItem(index)
-             #   self.signals[i].index = i+1
+        if index >= 0 and index < len(self.signals):
+            # Get the index of the signal to remove
+            signal_to_remove_index = self.signals[index].index
 
-        self.OriginalSignal.clear()
-        combined_signal = np.zeros(len(self.signals[0].y))
-        for signal in self.signals:
+            # Remove the signal from the list
+            removed_signal = self.signals.pop(index)
+
+            # Remove the item from the ComboBox
+            self.signalsList.removeItem(index)
+
+            # Reassign indices to the remaining signals
+            for i, signal in enumerate(self.signals):
+                signal.index = i + 1
+
+            # Clear the plot
+            self.OriginalSignal.clear()
+
+            # Update the combined signal
+            combined_signal = np.zeros(len(self.signals[0].y))
+            for signal in self.signals:
                 combined_signal += signal.y
 
-        self.signal = Signal(None, None, self.composed_signal.x, combined_signal)
-        self.plot_original(self.signal, 2,self.noise)
-
-    # def remove_signal(self):
-    #     index = self.signalsList.currentIndex()
-    #
-    #     if index >= 0 and index < len(self.signals):
-    #         # Get the index of the signal to remove
-    #         signal_to_remove_index = self.signals[index].index
-    #
-    #         # Remove the signal from the list
-    #         self.signals.pop(index)
-    #
-    #         # Update the indices of the remaining signals
-    #         for i in range(len(self.signals)):
-    #             self.signals[i].index = i + 1
-    #
-    #         # Remove the item from the combo box
-    #         self.signalsList.removeItem(index)
-    #
-    #         # Update the text of each item in the combo box with the updated indices
-    #         for i in range(self.signalsList.count()):
-    #             item_text = self.signalsList.itemText(i)
-    #             new_index = i + 1
-    #             updated_item_text = f"{new_index}- {item_text.split('- ', 1)[1]}"
-    #             self.signalsList.setItemText(i, updated_item_text)
-    #
-    #         self.OriginalSignal.clear()
-    #         combined_signal = np.zeros(len(self.signals[0].y))
-    #         for signal in self.signals:
-    #                 combined_signal += signal.y
-    #
-    #         self.signal = Signal(None, None, self.composed_signal.x, combined_signal)
-    #         self.plot_original(self.signal, 2)
+            # Update the combined signal
+            self.signal = Signal(None, None, self.composed_signal.x, combined_signal)
+            self.plot_original(self.signal, 2, self.noise)
 
 
     def add_noise(self):
