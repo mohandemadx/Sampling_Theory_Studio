@@ -22,7 +22,7 @@ from scipy.signal.windows import hamming
 
 FORM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "task2_design.ui"))
 
-
+# Imported Signal Class
 class Signal:
     def __init__(self, file_name, file_path, x, y):
         self.name = file_name
@@ -33,6 +33,8 @@ class Signal:
     def __str__(self):
         return f"Name: {self.name}, Path: {self.path}, X: {self.x}, Y: {self.y}"
 
+
+# Composed Signal Class
 class SinusoidalSignal:
     def __init__(self, frequency, amplitude, phase_shift, y, x):
         self.frequency = frequency
@@ -45,25 +47,30 @@ class SinusoidalSignal:
     def __str__(self):
         return f"Frequency: {self.frequency}, Amplitude: {self.amplitude}, Phase Shift: {self.phase_shift},Y: {self.y} ,X: {self.x}"
 
+
 class MainApp(QMainWindow, FORM_CLASS):
     def __init__(self, parent=None):
         super(MainApp, self).__init__(parent)
         QMainWindow.__init__(self)
         self.setupUi(self)
 
+        # Drag & Drop
         self.setAcceptDrops(True)
         self.manageSignalsFrame.setAcceptDrops(True)
 
         # Variables
         self.signal = None  # Object to store Signal
         self.time_sampled = None
+        self.Fmax = 1
+        self.signals = []
+        self.amplitudes = []
+        self.time = []
 
         # Set graph 1
         self.OriginalSignal.setBackground('w')
         self.OriginalSignal.setTitle("Original Signal")
         self.OriginalSignal.setLabel('bottom', text='Time (s)')
         self.OriginalSignal.setLabel('left', text='Amplitude')
-
 
         # Set graph 2
         self.Reconstructed.setBackground('w')
@@ -82,32 +89,34 @@ class MainApp(QMainWindow, FORM_CLASS):
         # Frequency-Sampling Actions
         self.FreqSlider.valueChanged.connect(self.freqchanged)
         self.checkBox.stateChanged.connect(self.update_freq_range)
-        self.snr_slider.setRange(0,50)
-        self.snr_slider.valueChanged.connect(self.add_noise)
-        self.noise=0
         self.checkBox.setChecked(True)
         self.FreqSlider.setRange(0, 4)
-
-
-
-
-        # mixer functions
-        self.FreqVal.setRange(1, 200)
-        self.AmpVal.setRange(1, 100)
-        self.phase_shift.setRange(0,360)
+        self.phase_shift.setRange(0, 360)
         self.phase_shift.setValue(0)
-        self.uploadButton_2.clicked.connect(lambda: self.plot_sin(self.FreqVal.value(),self.AmpVal.value(),self.phase_shift.value()))
-        self.Remove_btn.clicked.connect(self.remove_signal)
-        self.addnoise_checkbox.setChecked(True)
-        self.signals = []
+        self.uploadButton_2.clicked.connect(lambda: self.plot_sin(self.FreqVal.value(), self.AmpVal.value(), self.phase_shift.value()))
 
-        self.amplitudes = []
-        self.time = []
+        # Noise Actions
+        self.snr_slider.setRange(0, 100)
+        self.snr_slider.setValue(100)
+        self.snr_slider.valueChanged.connect(self.add_noise)
+        self.noise = 0
+        self.addnoise_checkbox.setChecked(False)
+
+        # Remove
+        self.Remove_btn.clicked.connect(self.remove_signal)
+
+        # Clear
+        self.clearButton.clicked.connect(self.reset)
 
         # Upload Action
         self.uploadButton.clicked.connect(self.upload_file)
+        self.addnoise_checkbox.stateChanged.connect(self.add_noise)
 
-    # UPLOAD SIGNAL
+        # Zoom
+        self.zoomIn_button.clicked.connect(self.zoomIn)
+        self.zoomOut_button.clicked.connect(self.zoomOut)
+
+    # FUNCTIONS
     def upload_file(self):
 
         options = QFileDialog.Options()
@@ -125,16 +134,23 @@ class MainApp(QMainWindow, FORM_CLASS):
             x = df.iloc[0:1000, 0].values
 
             self.signal = Signal(file_name, file_path, x, y)
+            self.Fmax = 100 #ECG Fmax
 
             self.label_2.setText(f'{self.signal.name}')
             color = QColor(0, 122, 217)  # Red color (RGB)
             self.label_2.setStyleSheet(f'color: {color.name()}; font-weight: bold')
             self.plot_original(self.signal, 2,self.noise)
+
+            self.createSignalFrame.setEnabled(False)
+            self.addnoise_checkbox.setEnabled(True)
+            self.NoiseFrame.setEnabled(True)
+
     def dragEnterEvent(self, event):
         mime_data = event.mimeData()
 
         if mime_data.hasUrls() and all(url.isLocalFile() for url in mime_data.urls()):
             event.acceptProposedAction()
+
     def dropEvent(self, event):
         mime_data = event.mimeData()
 
@@ -150,69 +166,76 @@ class MainApp(QMainWindow, FORM_CLASS):
                     x = df.iloc[0:1000, 0].values
 
                     self.signal = Signal(file_name, file_path, x, y)
+                    self.Fmax = 100  # ECG Fmax
 
                     self.label_2.setText(f'{self.signal.name}')
                     color = QColor(0, 122, 217)  # Red color (RGB)
                     self.label_2.setStyleSheet(f'color: {color.name()}; font-weight: bold')
                     self.plot_original(self.signal, 2,self.noise)
 
+                    self.createSignalFrame.setEnabled(False)
+                    self.addnoise_checkbox.setEnabled(True)
+                    self.NoiseFrame.setEnabled(True)
+
+    def zoomIn(self, graph):
+        zoom_factor = 0.8
+        self.OriginalSignal.getViewBox().scaleBy((zoom_factor, zoom_factor))
+        self.Reconstructed.getViewBox().scaleBy((zoom_factor, zoom_factor))
+        self.Difference.getViewBox().scaleBy((zoom_factor, zoom_factor))
+
+    def zoomOut(self):
+        zoom_factor = 1.2
+        self.OriginalSignal.getViewBox().scaleBy((zoom_factor, zoom_factor))
+        self.Reconstructed.getViewBox().scaleBy((zoom_factor, zoom_factor))
+        self.Difference.getViewBox().scaleBy((zoom_factor, zoom_factor))
+
     def update_freq_range(self):
 
         if self.checkBox.isChecked():
-            self.FreqSlider.setRange(1, 8)
+            self.FreqSlider.setRange(0, 4)
         else:
-            self.FreqSlider.setRange(2, int(len(self.signal.y)/(ceil(self.signal.x[-1]))))
+            self.FreqSlider.setRange(0, 4 * self.Fmax)
+
+    def reset(self):
+        # CLEAR VIEWS
+        self.OriginalSignal.clear()
+        self.Reconstructed.clear()
+        self.Difference.clear()
+
+        # CLEAR SIGNALS & LISTS
+        self.Fmax = 1
+        self.signal = None
+        self.signalsList.clear()
+        self.signals.clear()
+        self.noise = 100
+
+        # RESET THE GUI
+        self.createSignalFrame.setEnabled(True)
+        self.manageSignalsFrame.setEnabled(True)
+        self.signalsList.clear()
+        self.label_2.setText("Drag and drop file here")
+        self.FreqSlider.setValue(0)
+        self.AmpVal.setValue(0)
+        self.FreqVal.setValue(0)
+        self.phase_shift.setValue(0)
+        self.snr_slider.setValue(100)
+        self.NoiseFrame.setEnabled(False)
 
     def freqchanged(self):
         slider_value = self.FreqSlider.value()
-        self.plot_original(signal = self.signal,factor = slider_value,noise=self.noise)
 
-    # def plot_original(self, signal, factor,noise):
-    #
-    #
-    #     self.OriginalSignal.clear()
-    #     plot_item = self.OriginalSignal.plot(pen=pg.mkPen('blue', width=2))
-    #     plot_item.setData(signal.x, signal.y+noise)
-    #
-    #     max_frequency = self.calculate_max_freq(signal)
-    #
-    #     # Set the sampling frequency based on Nyquist theorem
-    #     if self.checkBox.isChecked():
-    #         Number_Of_Samples = factor * ceil(max_frequency)
-    #
-    #     else:
-    #         Number_Of_Samples = factor
-    #
-    #
-    #
-    #     # sampling_interval = 1 / sampling_frequency
-    #     Donimenator = ((Number_Of_Samples)*(ceil(signal.x[-1])))
-    #     if Donimenator != 0:
-    #         self.sampled_signal = signal.y[:: len(signal.x) // Donimenator]
-    #         self.time_sampled = signal.x[::len(signal.x) // Donimenator]
-    #
-    #
-    #     sampled_scatter = ScatterPlotItem()
-    #     sampled_scatter.setData(self.time_sampled, self.sampled_signal, symbol='o', brush=(255, 0, 0), size=10)
-    #     self.OriginalSignal.addItem(sampled_scatter)
-    #     self.plot_reconstructed(signal)
-    #     self.plot_diff(signal)
+        if self.checkBox.isChecked():
+            self.plot_original(signal=self.signal, sampling_freq=slider_value * self.Fmax, noise=self.noise)
+        else:
+            self.plot_original(signal=self.signal, sampling_freq=slider_value, noise=self.noise)
 
-    def plot_original(self, signal, factor, noise):
+    def plot_original(self, signal, sampling_freq, noise):
+
         self.OriginalSignal.clear()
         plot_item = self.OriginalSignal.plot(pen=pg.mkPen('blue', width=2))
         plot_item.setData(signal.x, signal.y + noise)
 
-        max_frequency = self.calculate_max_freq(signal)
-
-        # Set the number of samples based on the factor
-        if self.checkBox.isChecked():
-            num_samples = int(factor * max_frequency * signal.x[-1])  # Calculate the desired number of samples
-        else:
-            num_samples = int(factor)
-
-        # Ensure that num_samples is not zero
-        # num_samples = max(1, num_samples)
+        num_samples = int(sampling_freq * signal.x[-1])  # Calculate the desired number of samples
 
         # Interpolate the signal to create a more densely sampled version
         interp_func = interp1d(signal.x, signal.y + noise, kind='linear')
@@ -225,41 +248,6 @@ class MainApp(QMainWindow, FORM_CLASS):
         self.OriginalSignal.addItem(sampled_scatter)
         self.plot_reconstructed(signal)
         self.plot_diff(signal)
-
-    def calculate_max_freq(self, signal):
-
-        # Load data
-        amplitudes = signal.y
-        time = signal.x
-
-        # Parameters
-        n = len(signal.x)  # Increased data points for improved frequency resolution
-        Fs = 1 / (time[1] - time[0])
-
-        # Apply Hamming window
-        windowed_amplitudes = amplitudes * hamming(len(amplitudes))
-
-        # Zero-padding
-        zero_padded_amplitudes = np.pad(windowed_amplitudes, (0, n - len(amplitudes)), 'constant')
-
-        # Perform FFT
-        signal_freq = fft(zero_padded_amplitudes) / n
-        freqs = np.linspace(0, Fs / 2, n // 2)
-
-        # Averaging (for noise reduction)
-        num_averages = 10
-        averaged_signal_freq = np.zeros(n // 2)
-        for _ in range(num_averages):
-            averaged_signal_freq += np.abs(signal_freq[:n // 2])
-        averaged_signal_freq /= num_averages
-
-        # Find maximum frequency component
-        max_freq_index = np.argmax(averaged_signal_freq)
-        max_freq = freqs[max_freq_index]
-
-
-
-        return max_freq
 
     def reconstruct_signal(self, signal):
         time_domain = np.linspace(0, signal.x[-1], len(signal.x))
@@ -294,12 +282,19 @@ class MainApp(QMainWindow, FORM_CLASS):
     def generate_sinusoidal_signal(self, frequency, amplitude, phase_shift=0):
 
         t = np.linspace(0, 1, 1000)
-        composed_signal = amplitude * np.sin(2 * np.pi * frequency * t + np.deg2rad(phase_shift))
+        composed_signal = amplitude * np.cos(2 * np.pi * frequency * t + np.deg2rad(phase_shift))
+        if frequency > self.Fmax:
+            self.Fmax = frequency
+        self.AmpVal.setValue(0)
+        self.FreqVal.setValue(0)
+        self.phase_shift.setValue(0)
+        self.addnoise_checkbox.setEnabled(True)
+        self.NoiseFrame.setEnabled(True)
         return composed_signal
 
+    def plot_sin(self, frequency, amplitude, phase):
 
-
-    def plot_sin(self,frequency,amplitude,phase):
+        self.manageSignalsFrame.setEnabled(False)
 
         y = self.generate_sinusoidal_signal(frequency, amplitude, phase)
         x = np.linspace(0, 1, 1000)
@@ -311,15 +306,15 @@ class MainApp(QMainWindow, FORM_CLASS):
         self.signalsList.addItem(f"{i+1}-F:{self.composed_signal.frequency} , A:{self.composed_signal.amplitude}, phase shift:{self.composed_signal.phase_shift}")
 
         self.OriginalSignal.clear()
-       # Plot the signal
+
+        # Plot the signal
         combined_signal = np.zeros(len(self.signals[0].y))
         for signal in self.signals:
+            combined_signal += signal.y
 
-                combined_signal += signal.y
+        self.signal = Signal(None, None, self.composed_signal.x, combined_signal)
 
-        self.signal=Signal(None,None,self.composed_signal.x,combined_signal)
-        #self.OriginalSignal.plot(self.composed_signal.x,combined_signal, pen='b')
-        self.plot_original(self.signal,2,self.noise)
+        self.plot_original(self.signal, 2, self.noise)
 
     def remove_signal(self):
         index = self.signalsList.currentIndex()
@@ -351,7 +346,6 @@ class MainApp(QMainWindow, FORM_CLASS):
             # Update the combined signal
             self.signal = Signal(None, None, self.composed_signal.x, combined_signal)
             self.plot_original(self.signal, 2, self.noise)
-
 
     def add_noise(self):
         if self.addnoise_checkbox.isChecked():
