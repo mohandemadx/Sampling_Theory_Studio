@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1040</width>
-    <height>830</height>
+    <width>872</width>
+    <height>849</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,21 +15,26 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="6" column="1">
-     <widget class="QPushButton" name="pushButton_2">
+    <item row="0" column="5">
+     <widget class="QPushButton" name="pushButton_4">
       <property name="text">
-       <string>Full Screen</string>
+       <string>Zoom Out</string>
       </property>
      </widget>
     </item>
-    <item row="6" column="6">
-     <widget class="QPushButton" name="pushButton_7">
+    <item row="0" column="1">
+     <widget class="QLabel" name="label_13">
+      <property name="font">
+       <font>
+        <pointsize>17</pointsize>
+       </font>
+      </property>
       <property name="text">
-       <string>Restore/home</string>
+       <string>Sampling-Theory Studio</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="0" rowspan="7">
+    <item row="0" column="0" rowspan="4">
      <widget class="QFrame" name="frame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -188,7 +193,7 @@ border-radius: 40px;
            </widget>
           </item>
           <item alignment="Qt::AlignTop">
-           <widget class="QSlider" name="horizontalSlider">
+           <widget class="QSlider" name="AmpVal">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -197,6 +202,13 @@ border-radius: 40px;
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_18">
+            <property name="text">
+             <string>0</string>
             </property>
            </widget>
           </item>
@@ -219,7 +231,7 @@ border-radius: 40px;
            </widget>
           </item>
           <item alignment="Qt::AlignTop">
-           <widget class="QSlider" name="horizontalSlider_2">
+           <widget class="QSlider" name="FreqVal">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -228,6 +240,13 @@ border-radius: 40px;
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>0</string>
             </property>
            </widget>
           </item>
@@ -250,7 +269,7 @@ border-radius: 40px;
            </widget>
           </item>
           <item alignment="Qt::AlignTop">
-           <widget class="QSlider" name="horizontalSlider_3">
+           <widget class="QSlider" name="phase_shift">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -274,6 +293,13 @@ border-radius: 40px;
              </size>
             </property>
            </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_16">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QPushButton" name="uploadButton_2">
@@ -337,7 +363,7 @@ border-radius: 40px;
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="Remove_btn">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -396,9 +422,12 @@ border-radius: 40px;
             <property name="text">
              <string>Frequency:</string>
             </property>
+            <property name="buddy">
+             <cstring>FreqSlider</cstring>
+            </property>
            </widget>
           </item>
-          <item alignment="Qt::AlignTop">
+          <item>
            <widget class="QSlider" name="FreqSlider">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -411,7 +440,26 @@ border-radius: 40px;
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QLabel" name="label_14">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Noise:</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -426,18 +474,6 @@ border-radius: 40px;
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <widget class="QLabel" name="label_9">
-            <property name="font">
-             <font>
-              <pointsize>11</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Noise:</string>
-            </property>
-           </widget>
-          </item>
           <item>
            <widget class="QCheckBox" name="checkBox_2">
             <property name="text">
@@ -476,115 +512,47 @@ border-radius: 40px;
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
       </layout>
      </widget>
     </item>
-    <item row="6" column="2">
+    <item row="0" column="2">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="1" colspan="5">
+     <widget class="PlotWidget" name="Reconstructed"/>
+    </item>
+    <item row="0" column="4">
      <widget class="QPushButton" name="pushButton_3">
       <property name="text">
        <string>Zoom In</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="1" colspan="6">
-     <widget class="PlotWidget" name="Reconstructed"/>
-    </item>
-    <item row="1" column="6">
-     <widget class="QPushButton" name="pushButton_8">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>30</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Export</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="4">
-     <widget class="QPushButton" name="pushButton_5">
-      <property name="text">
-       <string>Pause</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1" colspan="6">
-     <widget class="PlotWidget" name="OriginalSignal"/>
+    <item row="3" column="1" colspan="5">
+     <widget class="PlotWidget" name="Difference"/>
     </item>
     <item row="1" column="1" colspan="5">
-     <widget class="QComboBox" name="comboBox">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>30</height>
-       </size>
-      </property>
-      <item>
-       <property name="text">
-        <string>Original Signal</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Sampled Signal</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Reconstructed Signal</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Difference Signal</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="0" column="1" colspan="2">
-     <widget class="QLabel" name="label_13">
-      <property name="font">
-       <font>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Choose Signal to View:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="3">
-     <widget class="QPushButton" name="pushButton_4">
-      <property name="text">
-       <string>Zoom Out</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="5">
-     <widget class="QPushButton" name="pushButton_6">
-      <property name="text">
-       <string>SnapShot</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="1" colspan="6">
-     <widget class="PlotWidget" name="Difference"/>
+     <widget class="PlotWidget" name="OriginalSignal"/>
     </item>
    </layout>
   </widget>
@@ -593,8 +561,8 @@ border-radius: 40px;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1040</width>
-     <height>26</height>
+     <width>872</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -608,5 +576,86 @@ border-radius: 40px;
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>FreqSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>label_14</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>112</x>
+     <y>514</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>109</x>
+     <y>544</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_6</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>label_15</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>72</x>
+     <y>661</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>79</x>
+     <y>684</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>AmpVal</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>label_18</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>96</x>
+     <y>210</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>93</x>
+     <y>220</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>FreqVal</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>label_17</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>114</x>
+     <y>248</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>115</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>phase_shift</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>label_16</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>59</x>
+     <y>286</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>63</x>
+     <y>303</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
