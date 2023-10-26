@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>872</width>
+    <width>870</width>
     <height>849</height>
    </rect>
   </property>
@@ -475,7 +475,7 @@ border-radius: 40px;
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QCheckBox" name="checkBox_2">
+           <widget class="QCheckBox" name="addnoise_checkbox">
             <property name="text">
              <string>Add Noise</string>
             </property>
@@ -561,7 +561,7 @@ border-radius: 40px;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>872</width>
+     <width>870</width>
      <height>22</height>
     </rect>
    </property>
@@ -584,12 +584,12 @@ border-radius: 40px;
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>112</x>
-     <y>514</y>
+     <x>141</x>
+     <y>636</y>
     </hint>
     <hint type="destinationlabel">
-     <x>109</x>
-     <y>544</y>
+     <x>138</x>
+     <y>658</y>
     </hint>
    </hints>
   </connection>
@@ -600,12 +600,12 @@ border-radius: 40px;
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>72</x>
-     <y>661</y>
+     <x>101</x>
+     <y>776</y>
     </hint>
     <hint type="destinationlabel">
-     <x>79</x>
-     <y>684</y>
+     <x>108</x>
+     <y>798</y>
     </hint>
    </hints>
   </connection>
@@ -616,12 +616,12 @@ border-radius: 40px;
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>96</x>
-     <y>210</y>
+     <x>125</x>
+     <y>234</y>
     </hint>
     <hint type="destinationlabel">
-     <x>93</x>
-     <y>220</y>
+     <x>122</x>
+     <y>256</y>
     </hint>
    </hints>
   </connection>
@@ -632,12 +632,12 @@ border-radius: 40px;
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>114</x>
-     <y>248</y>
+     <x>143</x>
+     <y>302</y>
     </hint>
     <hint type="destinationlabel">
-     <x>115</x>
-     <y>257</y>
+     <x>144</x>
+     <y>324</y>
     </hint>
    </hints>
   </connection>
@@ -648,12 +648,12 @@ border-radius: 40px;
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>59</x>
-     <y>286</y>
+     <x>88</x>
+     <y>370</y>
     </hint>
     <hint type="destinationlabel">
-     <x>63</x>
-     <y>303</y>
+     <x>92</x>
+     <y>398</y>
     </hint>
    </hints>
   </connection>

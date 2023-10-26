@@ -82,8 +82,9 @@ class MainApp(QMainWindow, FORM_CLASS):
         # Frequency-Sampling Actions
         self.FreqSlider.valueChanged.connect(self.freqchanged)
         self.checkBox.stateChanged.connect(self.update_freq_range)
-      #  self.snr_slider.valueChanged.connect(self.add_noise)
-
+        self.snr_slider.setRange(0,50)
+        self.snr_slider.valueChanged.connect(self.add_noise)
+        self.noise=0
         self.checkBox.setChecked(True)
         self.FreqSlider.setRange(0, 4)
 
@@ -97,6 +98,7 @@ class MainApp(QMainWindow, FORM_CLASS):
         self.phase_shift.setValue(0)
         self.uploadButton_2.clicked.connect(lambda: self.plot_sin(self.FreqVal.value(),self.AmpVal.value(),self.phase_shift.value()))
         self.Remove_btn.clicked.connect(self.remove_signal)
+        self.addnoise_checkbox.setChecked(True)
         self.signals = []
 
         self.amplitudes = []
@@ -127,7 +129,7 @@ class MainApp(QMainWindow, FORM_CLASS):
             self.label_2.setText(f'{self.signal.name}')
             color = QColor(0, 122, 217)  # Red color (RGB)
             self.label_2.setStyleSheet(f'color: {color.name()}; font-weight: bold')
-            self.plot_original(self.signal, 2)
+            self.plot_original(self.signal, 2,self.noise)
     def dragEnterEvent(self, event):
         mime_data = event.mimeData()
 
@@ -152,7 +154,7 @@ class MainApp(QMainWindow, FORM_CLASS):
                     self.label_2.setText(f'{self.signal.name}')
                     color = QColor(0, 122, 217)  # Red color (RGB)
                     self.label_2.setStyleSheet(f'color: {color.name()}; font-weight: bold')
-                    self.plot_original(self.signal, 2)
+                    self.plot_original(self.signal, 2,self.noise)
 
     def update_freq_range(self):
 
@@ -165,12 +167,12 @@ class MainApp(QMainWindow, FORM_CLASS):
         slider_value = self.FreqSlider.value()
         self.plot_original(signal = self.signal, factor = slider_value)
 
-    def plot_original(self, signal, factor):
+    def plot_original(self, signal, factor,noise):
 
-      #  noise=self.add_noise()
+
         self.OriginalSignal.clear()
         plot_item = self.OriginalSignal.plot(pen=pg.mkPen('blue', width=2))
-        plot_item.setData(signal.x, signal.y)
+        plot_item.setData(signal.x, signal.y+noise)
 
         max_frequency = self.calculate_max_freq(signal)
 
@@ -289,7 +291,7 @@ class MainApp(QMainWindow, FORM_CLASS):
 
         self.signal=Signal(None,None,self.composed_signal.x,combined_signal)
         #self.OriginalSignal.plot(self.composed_signal.x,combined_signal, pen='b')
-        self.plot_original(self.signal,2)
+        self.plot_original(self.signal,2,self.noise)
 
     def remove_signal(self):
         index = self.signalsList.currentIndex()
@@ -307,21 +309,57 @@ class MainApp(QMainWindow, FORM_CLASS):
                 combined_signal += signal.y
 
         self.signal = Signal(None, None, self.composed_signal.x, combined_signal)
-        self.plot_original(self.signal, 2)
+        self.plot_original(self.signal, 2,self.noise)
 
-    # def add_noise(self):
-    #     snr_slider_value = self.snr_slider.value()  # Replace this with the actual SNR value from your slider
+    # def remove_signal(self):
+    #     index = self.signalsList.currentIndex()
     #
-    #     # Calculate the standard deviation (sigma) based on SNR (in dB)
-    #     # SNR = 20 * log10(amplitude_signal / amplitude_noise)
-    #     amplitude_signal = self.signal.y
-    #     snr_linear = 10 ** (snr_slider_value / 20.0)  # Convert SNR from dB to linear scale
-    #     sigma = amplitude_signal / snr_linear
-    #     mu = 0  # Mean of the Gaussian noise (typically 0)
-    #     num_samples = len(self.signal.y)  # Number of noise samples
-    #     gaussian_noise = np.random.normal(mu, sigma, num_samples)
-    #     self.plot_original(self.signal,2)
+    #     if index >= 0 and index < len(self.signals):
+    #         # Get the index of the signal to remove
+    #         signal_to_remove_index = self.signals[index].index
+    #
+    #         # Remove the signal from the list
+    #         self.signals.pop(index)
+    #
+    #         # Update the indices of the remaining signals
+    #         for i in range(len(self.signals)):
+    #             self.signals[i].index = i + 1
+    #
+    #         # Remove the item from the combo box
+    #         self.signalsList.removeItem(index)
+    #
+    #         # Update the text of each item in the combo box with the updated indices
+    #         for i in range(self.signalsList.count()):
+    #             item_text = self.signalsList.itemText(i)
+    #             new_index = i + 1
+    #             updated_item_text = f"{new_index}- {item_text.split('- ', 1)[1]}"
+    #             self.signalsList.setItemText(i, updated_item_text)
+    #
+    #         self.OriginalSignal.clear()
+    #         combined_signal = np.zeros(len(self.signals[0].y))
+    #         for signal in self.signals:
+    #                 combined_signal += signal.y
+    #
+    #         self.signal = Signal(None, None, self.composed_signal.x, combined_signal)
+    #         self.plot_original(self.signal, 2)
 
+
+    def add_noise(self):
+        if self.addnoise_checkbox.isChecked():
+            self.snr_slider.setEnabled(True)
+            snr_dB = self.snr_slider.value()
+            snr_linear = 10 ** (snr_dB / 10)
+
+            # Calculate the standard deviation (sigma) of the Gaussian noise
+            signal_power = np.var(self.signal.y)  # Compute the power of the signal
+            noise_power = signal_power / snr_linear
+            sigma = np.sqrt(noise_power)
+            self.noise = np.random.normal(0, sigma, len(self.signal.y))
+            self.plot_original(self.signal,2,self.noise)
+        else:
+            self.snr_slider.setEnabled(False)
+            self.OriginalSignal.clear()
+            self.OriginalSignal.plot(self.signal.y[:1000], pen='b', name='Original Signal')
 
 def main():
     app = QApplication(sys.argv)
