@@ -167,30 +167,58 @@ class MainApp(QMainWindow, FORM_CLASS):
         slider_value = self.FreqSlider.value()
         self.plot_original(signal = self.signal,factor = slider_value,noise=self.noise)
 
-    def plot_original(self, signal, factor,noise):
+    # def plot_original(self, signal, factor,noise):
+    #
+    #
+    #     self.OriginalSignal.clear()
+    #     plot_item = self.OriginalSignal.plot(pen=pg.mkPen('blue', width=2))
+    #     plot_item.setData(signal.x, signal.y+noise)
+    #
+    #     max_frequency = self.calculate_max_freq(signal)
+    #
+    #     # Set the sampling frequency based on Nyquist theorem
+    #     if self.checkBox.isChecked():
+    #         Number_Of_Samples = factor * ceil(max_frequency)
+    #
+    #     else:
+    #         Number_Of_Samples = factor
+    #
+    #
+    #
+    #     # sampling_interval = 1 / sampling_frequency
+    #     Donimenator = ((Number_Of_Samples)*(ceil(signal.x[-1])))
+    #     if Donimenator != 0:
+    #         self.sampled_signal = signal.y[:: len(signal.x) // Donimenator]
+    #         self.time_sampled = signal.x[::len(signal.x) // Donimenator]
+    #
+    #
+    #     sampled_scatter = ScatterPlotItem()
+    #     sampled_scatter.setData(self.time_sampled, self.sampled_signal, symbol='o', brush=(255, 0, 0), size=10)
+    #     self.OriginalSignal.addItem(sampled_scatter)
+    #     self.plot_reconstructed(signal)
+    #     self.plot_diff(signal)
 
-
+    def plot_original(self, signal, factor, noise):
         self.OriginalSignal.clear()
         plot_item = self.OriginalSignal.plot(pen=pg.mkPen('blue', width=2))
-        plot_item.setData(signal.x, signal.y+noise)
+        plot_item.setData(signal.x, signal.y + noise)
 
         max_frequency = self.calculate_max_freq(signal)
 
-        # Set the sampling frequency based on Nyquist theorem
+        # Set the number of samples based on the factor
         if self.checkBox.isChecked():
-            Number_Of_Samples = factor * ceil(max_frequency)
-
+            num_samples = int(factor * max_frequency * signal.x[-1])  # Calculate the desired number of samples
         else:
-            Number_Of_Samples = factor
+            num_samples = int(factor)
 
+        # Ensure that num_samples is not zero
+        # num_samples = max(1, num_samples)
 
-
-        # sampling_interval = 1 / sampling_frequency
-        Donimenator = ((Number_Of_Samples)*(ceil(signal.x[-1])))
-        if Donimenator != 0:
-            self.sampled_signal = signal.y[:: len(signal.x) // Donimenator]
-            self.time_sampled = signal.x[::len(signal.x) // Donimenator]
-
+        # Interpolate the signal to create a more densely sampled version
+        interp_func = interp1d(signal.x, signal.y + noise, kind='linear')
+        sampled_time = np.linspace(signal.x[0], signal.x[-1], num_samples)
+        self.sampled_signal = interp_func(sampled_time)
+        self.time_sampled = sampled_time
 
         sampled_scatter = ScatterPlotItem()
         sampled_scatter.setData(self.time_sampled, self.sampled_signal, symbol='o', brush=(255, 0, 0), size=10)
