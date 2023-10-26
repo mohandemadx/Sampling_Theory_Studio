@@ -312,6 +312,8 @@ class MainApp(QMainWindow, FORM_CLASS):
 
             # Clear the plot
             self.OriginalSignal.clear()
+            self.Reconstructed.clear()
+            self.Difference.clear()
 
             # Update the combined signal
             combined_signal = np.zeros(len(self.signals[0].y))
