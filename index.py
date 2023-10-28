@@ -141,6 +141,8 @@ class MainApp(QMainWindow, FORM_CLASS):
             self.label_2.setStyleSheet(f'color: {color.name()}; font-weight: bold')
             self.plot_original(self.signal, 2,self.noise)
 
+
+
             self.createSignalFrame.setEnabled(False)
             self.addnoise_checkbox.setEnabled(True)
             self.NoiseFrame.setEnabled(True)
@@ -171,7 +173,9 @@ class MainApp(QMainWindow, FORM_CLASS):
                     self.label_2.setText(f'{self.signal.name}')
                     color = QColor(0, 122, 217)  # Red color (RGB)
                     self.label_2.setStyleSheet(f'color: {color.name()}; font-weight: bold')
-                    self.plot_original(self.signal, 2,self.noise)
+                    self.plot_original(self.signal, 2*self.Fmax,self.noise)
+
+
 
                     self.createSignalFrame.setEnabled(False)
                     self.addnoise_checkbox.setEnabled(True)
@@ -190,7 +194,8 @@ class MainApp(QMainWindow, FORM_CLASS):
         self.Difference.getViewBox().scaleBy((zoom_factor, zoom_factor))
 
     def update_freq_range(self):
-
+        if self.addnoise_checkbox.isChecked:
+            self.Fmax=2*self.Fmax
         if self.checkBox.isChecked():
             self.FreqSlider.setRange(0, 4)
         else:
@@ -238,7 +243,7 @@ class MainApp(QMainWindow, FORM_CLASS):
         num_samples = int(sampling_freq * signal.x[-1])  # Calculate the desired number of samples
 
         # Interpolate the signal to create a more densely sampled version
-        interp_func = interp1d(signal.x, signal.y + noise, kind='linear')
+        interp_func = interp1d(signal.x, signal.y , kind='linear')
         sampled_time = np.linspace(signal.x[0], signal.x[-1], num_samples)
         self.sampled_signal = interp_func(sampled_time)
         self.time_sampled = sampled_time
@@ -295,6 +300,8 @@ class MainApp(QMainWindow, FORM_CLASS):
     def plot_sin(self, frequency, amplitude, phase):
 
         self.manageSignalsFrame.setEnabled(False)
+        self.FreqSlider.setValue(0)
+
 
         y = self.generate_sinusoidal_signal(frequency, amplitude, phase)
         x = np.linspace(0, 1, 1000)
@@ -315,6 +322,7 @@ class MainApp(QMainWindow, FORM_CLASS):
         self.signal = Signal(None, None, self.composed_signal.x, combined_signal)
 
         self.plot_original(self.signal, 2, self.noise)
+
 
     def remove_signal(self):
         index = self.signalsList.currentIndex()
@@ -349,6 +357,7 @@ class MainApp(QMainWindow, FORM_CLASS):
 
     def add_noise(self):
         if self.addnoise_checkbox.isChecked():
+            self.FreqSlider.setValue(0)
             self.snr_slider.setEnabled(True)
             snr_dB = self.snr_slider.value()
             snr_linear = 10 ** (snr_dB / 10)
