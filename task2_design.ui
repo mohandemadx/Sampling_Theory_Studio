@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>870</width>
-    <height>893</height>
+    <height>849</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,9 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="1" colspan="6">
-     <widget class="PlotWidget" name="Reconstructed"/>
-    </item>
     <item row="0" column="0" rowspan="4">
      <widget class="QFrame" name="frame">
       <property name="sizePolicy">
@@ -281,6 +278,13 @@ border-radius: 40px;
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="label_16">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -292,13 +296,6 @@ border-radius: 40px;
              </size>
             </property>
            </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_16">
-            <property name="text">
-             <string>0</string>
-            </property>
-           </widget>
           </item>
           <item>
            <widget class="QPushButton" name="uploadButton_2">
@@ -399,7 +396,7 @@ border-radius: 40px;
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="freq_checkbox">
             <property name="text">
              <string>Normalized</string>
             </property>
@@ -545,32 +542,11 @@ border-radius: 40px;
       </property>
      </widget>
     </item>
-    <item row="1" column="1" colspan="6">
+    <item row="2" column="1" colspan="5">
+     <widget class="PlotWidget" name="Reconstructed"/>
+    </item>
+    <item row="1" column="1" colspan="5">
      <widget class="PlotWidget" name="OriginalSignal"/>
-    </item>
-    <item row="3" column="1" colspan="6">
-     <widget class="PlotWidget" name="Difference"/>
-    </item>
-    <item row="0" column="6">
-     <widget class="QPushButton" name="zoomOut_button">
-      <property name="text">
-       <string>Zoom Out</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="5">
-     <widget class="QPushButton" name="zoomIn_button">
-      <property name="text">
-       <string>Zoom In</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="4">
-     <widget class="QPushButton" name="clearButton">
-      <property name="text">
-       <string>Clear</string>
-      </property>
-     </widget>
     </item>
     <item row="0" column="2" colspan="2">
      <spacer name="horizontalSpacer">
@@ -585,6 +561,16 @@ border-radius: 40px;
       </property>
      </spacer>
     </item>
+    <item row="3" column="1" colspan="5">
+     <widget class="PlotWidget" name="Difference"/>
+    </item>
+    <item row="0" column="5">
+     <widget class="QPushButton" name="clearButton">
+      <property name="text">
+       <string>Clear</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -593,7 +579,7 @@ border-radius: 40px;
      <x>0</x>
      <y>0</y>
      <width>870</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
