@@ -3,6 +3,9 @@
 ### Description:
 -  It is a Desktop application that illustrates the signal sampling and recovery showing the importance and validation of the Nyquist Theory
 
+### Technology used:
+- PyQt5 and PyQtGraph
+  
 ### Our Features:
    * Sampling an uploaded Signal and Visualize its reconstruction.
    * Adding SNR noise to the loaded signal and reconstructing it. 
@@ -10,9 +13,6 @@
    * Sampling and reconstructing the mixed signal.
    * Adding noise to the mixed signal and reconstructing it.
    * Remove any component from the mixed signal.
-
-### Technology used:
-- PyQt5 and PyQtGraph
 
 ### Application Flow:
 
